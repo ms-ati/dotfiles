@@ -1,0 +1,9 @@
+{
+	"files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "rubyLsp.rubyVersionManager": {
+        "identifier": "chruby"
+    },
+    "rubyLsp.bundleGemfile": "/workspaces/monorama/.devcontainer/engineering/tools/lsp/Gemfile"
+}
