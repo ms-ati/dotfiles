@@ -29,3 +29,16 @@ for file in "${SCRIPT_DIR}/windsurf/Machine/"*; do
 done
 
 echo "Symlinking complete."
+
+# Append the Windsurf IDE configuration to .bashrc if it doesn't already exist
+if ! grep -q "VSCODE_GIT_ASKPASS_NODE.*\.windsurf-server" ~/.bashrc; then
+  cat >> ~/.bashrc << 'EOF'
+
+# Set GIT_EDITOR to use Windsurf IDE when running inside Windsurf
+if [[ -n "$VSCODE_GIT_ASKPASS_NODE" && "$VSCODE_GIT_ASKPASS_NODE" == *".windsurf-server"* ]]; then
+    # Using the integrated terminal in Windsurf
+    export GIT_EDITOR="windsurf --wait"  # Assumes the 'windsurf' command exists
+fi
+EOF
+  echo "Added Windsurf IDE configuration to .bashrc"
+fi
