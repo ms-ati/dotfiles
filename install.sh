@@ -18,13 +18,19 @@ for file in "${SCRIPT_DIR}/."*; do
 done
 
 WINDSURF_DIR="/home/codespace/.windsurf-server/data"
-mkdir -p "${WINDSURF_DIR}/Machine" # Create the directory if it doesn't exist
+mkdir -p "${WINDSURF_DIR}/Machine"
+
+CURSOR_DIR="/home/codespace/.cursor-server/data"
+mkdir -p "${CURSOR_DIR}/Machine"
 
 # Symlink the Windsurf remote settings
 for file in "${SCRIPT_DIR}/windsurf/Machine/"*; do
   if [[ -f "$file" && "$(basename "$file")" != "." && "$(basename "$file")" != ".." ]]; then
     echo "Creating symlink: ${WINDSURF_DIR}/Machine/$(basename "$file") -> $file"
     ln -sf "$file" "${WINDSURF_DIR}/Machine/$(basename "$file")"
+
+    echo "Creating symlink: ${CURSOR_DIR}/Machine/$(basename "$file") -> $file"
+    ln -sf "$file" "${CURSOR_DIR}/Machine/$(basename "$file")"
   fi
 done
 
