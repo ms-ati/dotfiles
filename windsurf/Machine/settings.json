@@ -5,5 +5,5 @@
     "rubyLsp.rubyVersionManager": {
         "identifier": "chruby"
     },
-    "rubyLsp.bundleGemfile": "/workspaces/monorama/.devcontainer/engineering/tools/lsp/Gemfile"
+    "rubyLsp.bundleGemfile": "/workspaces/monorama/.devcontainer/shared/tools/lsp/Gemfile"
 }
