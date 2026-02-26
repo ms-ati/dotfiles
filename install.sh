@@ -26,9 +26,15 @@ for file in "${SCRIPT_DIR}/cursor/Machine/"*; do
   fi
 done
 
-# ---- 3. MCP config: merge repo's mcp.json into ~/.cursor/mcp.json ----
-# Repo is source of truth for servers we define; any extra servers in existing file are kept.
+# ---- 3. Cursor user dir: MCP, skills, commands, subagents ----
 mkdir -p "$HOME/.cursor"
+# Skills (~/.cursor/skills): https://cursor.com/docs/context/skills
+[[ -d "${SCRIPT_DIR}/cursor/skills" ]] && { rm -rf "$HOME/.cursor/skills" 2>/dev/null; ln -sf "${SCRIPT_DIR}/cursor/skills" "$HOME/.cursor/skills"; echo "[dotfiles] Linked ~/.cursor/skills"; }
+# Global commands (~/.cursor/commands): https://cursor.com/docs/context/commands
+[[ -d "${SCRIPT_DIR}/cursor/commands" ]] && { rm -rf "$HOME/.cursor/commands" 2>/dev/null; ln -sf "${SCRIPT_DIR}/cursor/commands" "$HOME/.cursor/commands"; echo "[dotfiles] Linked ~/.cursor/commands"; }
+# User subagents (~/.cursor/agents): https://cursor.com/docs/context/subagents
+[[ -d "${SCRIPT_DIR}/cursor/agents" ]] && { rm -rf "$HOME/.cursor/agents" 2>/dev/null; ln -sf "${SCRIPT_DIR}/cursor/agents" "$HOME/.cursor/agents"; echo "[dotfiles] Linked ~/.cursor/agents"; }
+# MCP config: merge repo's mcp.json into ~/.cursor/mcp.json (repo is source of truth; local-only servers kept).
 REPO_MCP="${SCRIPT_DIR}/cursor/mcp.json"
 USER_MCP="$HOME/.cursor/mcp.json"
 if [[ ! -f "$USER_MCP" ]]; then

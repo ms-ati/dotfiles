@@ -6,17 +6,21 @@ Personal config for new Codespaces: Cursor remote settings, MCP servers (e.g. At
 
 | Path                             | Purpose                                                                                                                               |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `install.sh`                     | Entrypoint run by Codespaces; symlinks files, merges MCP config, installs extensions, sets `GIT_EDITOR`.                              |
+| `install.sh`                     | Entrypoint run by Codespaces; symlinks files, links Cursor skills/commands/agents, merges MCP, installs extensions, sets `GIT_EDITOR`.  |
 | `.bash_profile`, `.bash_aliases` | Shell env and aliases (symlinked to `~`).                                                                                             |
 | `cursor/Machine/settings.json`   | Cursor remote (Machine) settings — Ruby LSP, editor defaults (symlinked into `~/.cursor-server/data/Machine`).                        |
 | `cursor/mcp.json`                | MCP server definitions (e.g. Atlassian). Merged into `~/.cursor/mcp.json` so repo is source of truth but local-only servers are kept. |
-| `cursor/extensions.txt`          | Extension IDs (one per line); installed with `code`, then copied into Cursor’s extensions dir when present.                               |
+| `cursor/extensions.txt`          | Extension IDs (one per line); installed with `code`, then copied into Cursor’s extensions dir when present.                             |
+| `cursor/skills/`                 | [Agent Skills](https://cursor.com/docs/context/skills) — symlinked to `~/.cursor/skills`. Experiment here; promote to org repos when ready. |
+| `cursor/commands/`               | [Global commands](https://cursor.com/docs/context/commands) — symlinked to `~/.cursor/commands`. Slash commands available in every project. |
+| `cursor/agents/`                 | [User subagents](https://cursor.com/docs/context/subagents) — symlinked to `~/.cursor/agents`. Custom subagents for all projects.      |
 
 ## Design choices
 
 - **Extensions:** “At least these” — we only *install* from the list; we don’t uninstall other extensions. So you get Ruby LSP (and any others you add) without removing preinstalled or other tools.
 - **Extension format:** In the repo it’s a text file (`cursor/extensions.txt`). The script always uses `code` to install (so it works at dotfiles-run time when only the VS Code server may exist). It then copies those extensions from `~/.vscode-server/extensions` into `~/.cursor-server/extensions` when both dirs exist, so Cursor gets the same set. If you open the codespace in Cursor and don’t see them (e.g. dotfiles ran before first Cursor connection), run `bash install.sh` again to copy into Cursor.
 - **MCP merge:** When `~/.cursor/mcp.json` already exists, we merge: repo-defined servers are applied/updated, and any servers you added only locally are preserved (using `jq`).
+- **Rules:** User-level rules in `~/.cursor/rules` are [not applied by Cursor today](https://forum.cursor.com/t/rules-in-home-folder-cursor-rules-are-not-applied/147236), so we do not link rules from this repo. Use project rules (`.cursor/rules` in each repo) or Cursor Settings → Rules for now.
 
 ## Usage
 
