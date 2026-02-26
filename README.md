@@ -1,35 +1,31 @@
-# Dotfiles for Windsurf IDE configuration in GitHub Codespaces
+# Dotfiles for Cursor IDE in GitHub Codespaces
+
+Personal config for new Codespaces: Cursor remote settings, MCP servers (e.g. Atlassian), extensions, and shell.
 
 ## Contents
 
-### Windsurf IDE config for Ruby LSP with Rubocop support
+| Path                             | Purpose                                                                                                                               |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `install.sh`                     | Entrypoint run by Codespaces; symlinks files, merges MCP config, installs extensions, sets `GIT_EDITOR`.                              |
+| `.bash_profile`, `.bash_aliases` | Shell env and aliases (symlinked to `~`).                                                                                             |
+| `cursor/Machine/settings.json`   | Cursor remote (Machine) settings — Ruby LSP, editor defaults (symlinked into `~/.cursor-server/data/Machine`).                        |
+| `cursor/mcp.json`                | MCP server definitions (e.g. Atlassian). Merged into `~/.cursor/mcp.json` so repo is source of truth but local-only servers are kept. |
+| `cursor/extensions.txt`          | Extension IDs (one per line); installed with `code`, then copied into Cursor’s extensions dir when present.                               |
 
-Symlinked into `/home/codespace/.windsurf-server/data/Machine`:
-- `windsurf/Machine/settings.json` — Remote settings for Windsurf
+## Design choices
 
-### Bash config for setting GIT_EDITOR in Windsurf terminals
-
-Symlinked into your home directory `~`:
-- `.bash_aliases` — Set bash shell aliases here
-- `.bash_profile` — Configure bash shell environment here
+- **Extensions:** “At least these” — we only *install* from the list; we don’t uninstall other extensions. So you get Ruby LSP (and any others you add) without removing preinstalled or other tools.
+- **Extension format:** In the repo it’s a text file (`cursor/extensions.txt`). The script always uses `code` to install (so it works at dotfiles-run time when only the VS Code server may exist). It then copies those extensions from `~/.vscode-server/extensions` into `~/.cursor-server/extensions` when both dirs exist, so Cursor gets the same set. If you open the codespace in Cursor and don’t see them (e.g. dotfiles ran before first Cursor connection), run `bash install.sh` again to copy into Cursor.
+- **MCP merge:** When `~/.cursor/mcp.json` already exists, we merge: repo-defined servers are applied/updated, and any servers you added only locally are preserved (using `jq`).
 
 ## Usage
 
-1. Install the **Ruby LSP** extension in Windsurf
-2. Uninstall _any Rubocop_ extensions from Windsurf
-3. Exit and restart Windsurf after installing the Windsurf settings below
+### Automatic (all new codespaces)
 
-### Manual - only Windsurf settings - one codespace
+1. Ensure this repo is in your GitHub account and [enable dotfiles for Codespaces](https://docs.github.com/en/codespaces/setting-your-user-preferences/personalizing-github-codespaces-for-your-account#dotfiles): **Settings → Codespaces → Dotfiles** → enable **Automatically install dotfiles** and select this repository.
+2. New codespaces will clone the repo and run `install.sh`.
 
-_Installs only `settings.json`, no bash settings_
-
-```bash
-mkdir -p /home/codespace/.windsurf-server/data/Machine
-cd /home/codespace/.windsurf-server/data/Machine
-curl -O https://raw.githubusercontent.com/ms-ati/dotfiles/refs/heads/main/windsurf/Machine/settings.json
-```
-
-### Manual - both bash and Windsurf settings - one codespace
+### Manual (one codespace)
 
 ```bash
 cd /workspaces
@@ -38,17 +34,24 @@ cd dotfiles
 bash install.sh
 ```
 
-### Automatic - both bash and Windsurf settings - all new codespaces
+### After first open in Cursor
 
-1. Fork this [ms-ati/dotfiles](https://github.com/ms-ati/dotfiles) repo into a public repo that you own
-2. Go to [codespaces settings](https://github.com/settings/codespaces) and select your new repo under _Automatically install dotfiles_
-3. Now, whenever you create a new codespace it will clone the repo and run `install.sh`
+- **Atlassian:** Install the [Atlassian plugin](https://cursor.com/marketplace/atlassian) from Cursor (Settings → Plugins / Marketplace) if you want the full plugin UI and skills. The dotfiles already add the Atlassian MCP entry to `~/.cursor/mcp.json`, so MCP is configured; complete the OAuth sign-in when Cursor prompts you (e.g. first use of Jira/Confluence tools).
 
-## Hints for getting Rubocop working in Windsurf
+## Adding more MCP servers
 
-* Open your remote folder to a specific app (e.g. `/workspaces/monorama/apps/nds`) or
-  gem (e.g. `/workspaces/monorama/lib/gems/panorama_ai`) rather than to the monorama root
-* Ask for help if you may have manually configured Ruby LSP settings (at the
-  User, Remote, or Workspace levels) which may be conflicting with these settings.
+Edit `cursor/mcp.json`: add a new key under `mcpServers` with the server’s config (e.g. `"url": "..."` or `"command"` / `"args"`). Push; new codespaces and re-runs of `install.sh` will merge it in. Example:
 
+```json
+{
+  "mcpServers": {
+    "Atlassian": { "url": "https://mcp.atlassian.com/v1/mcp", "headers": {} },
+    "my-other-mcp": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-foo"], "env": {} }
+  }
+}
+```
 
+## Ruby LSP / Rubocop
+
+- Remote settings point Ruby LSP at the monorama LSP Gemfile (`rubyLsp.bundleGemfile`). Open the folder to the app or gem you care about (e.g. `apps/nds` or a gem under `lib/gems/`) rather than the monorepo root if you want correct Rubocop scope.
+- Don’t install extra Rubocop extensions; Ruby LSP includes the Rubocop integration.

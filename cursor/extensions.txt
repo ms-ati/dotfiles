@@ -1,0 +1,6 @@
+# One extension ID per line (publisher.extension-name).
+# Installed via: code --install-extension <id>
+# Atlassian: use Cursor Settings → Tools & MCP to add the official Atlassian plugin
+# (cursor.com/marketplace/atlassian); it registers MCP and OAuth. This file lists CLI-installable extensions only.
+Shopify.ruby-lsp
+TakumiI.markdowntable
