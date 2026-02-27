@@ -2,7 +2,29 @@
   "mcpServers": {
     "Atlassian": {
       "url": "https://mcp.atlassian.com/v1/mcp",
-      "headers": {}
+      "headers": {},
+      "alwaysAllow": [
+        "atlassianUserInfo",
+        "fetch",
+        "getAccessibleAtlassianResources",
+        "getConfluenceCommentChildren",
+        "getConfluencePage",
+        "getConfluencePageDescendants",
+        "getConfluencePageFooterComments",
+        "getConfluencePageInlineComments",
+        "getConfluenceSpaces",
+        "getJiraIssue",
+        "getJiraIssueRemoteIssueLinks",
+        "getJiraIssueTypeMetaWithFields",
+        "getJiraProjectIssueTypesMetadata",
+        "getPagesInConfluenceSpace",
+        "getTransitionsForJiraIssue",
+        "getVisibleJiraProjects",
+        "lookupJiraAccountId",
+        "search",
+        "searchConfluenceUsingCql",
+        "searchJiraIssuesUsingJql"
+      ]
     }
   }
 }
