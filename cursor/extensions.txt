@@ -4,3 +4,4 @@
 # (cursor.com/marketplace/atlassian); it registers MCP and OAuth. This file lists CLI-installable extensions only.
 Shopify.ruby-lsp
 TakumiI.markdowntable
+bierner.markdown-mermaid
