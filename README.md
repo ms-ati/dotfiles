@@ -34,21 +34,21 @@ bash scripts/install-cursor-tools.sh
 
 ### Personal customization
 
-| Path | What it does |
-| ---- | ------------ |
-| `.bash_aliases` | Shell aliases (injected into `~/.bash_aliases` via marker block) |
-| `.bash_profile` | Shell profile — sources `~/.profile`, sets git aliases (injected into `~/.bash_profile`) |
-| `cursor/Machine/settings.json` | Cursor remote (Machine) settings: Ruby LSP, file trimming. Symlinked into `~/.cursor-server/data/Machine/`. |
-| `cursor/extensions.txt` | Extension IDs to install (one per line). Installed via `code`, then copied to Cursor's extensions dir. |
-| `cursor/mcp.json` | MCP server definitions. Merged into `~/.cursor/mcp.json` — repo keys win on conflicts, local-only servers are preserved. |
+| Path                           | What it does                                                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `.bash_aliases`                | Shell aliases (injected into `~/.bash_aliases` via marker block)                                                         |
+| `.bash_profile`                | Shell profile — sources `~/.profile`, sets git aliases (injected into `~/.bash_profile`)                                 |
+| `cursor/Machine/settings.json` | Cursor remote (Machine) settings: Ruby LSP, file trimming. Symlinked into `~/.cursor-server/data/Machine/`.              |
+| `cursor/extensions.txt`        | Extension IDs to install (one per line). Installed via `code`, then copied to Cursor's extensions dir.                   |
+| `cursor/mcp.json`              | MCP server definitions. Merged into `~/.cursor/mcp.json` — repo keys win on conflicts, local-only servers are preserved. |
 
 ### Tooling experimentation
 
-| Path | What it does |
-| ---- | ------------ |
-| `cursor/skills/` | [Agent Skills](https://cursor.com/docs/context/skills) — each subfolder is one skill. Individual subfolders are symlinked into `~/.cursor/skills/`. Experiment here; promote to `monorama/.cursor/skills/` when ready. |
-| `cursor/commands/` | [Global commands](https://cursor.com/docs/context/commands) — individual subfolders symlinked into `~/.cursor/commands/`. Slash commands available in every project. |
-| `cursor/agents/` | [User subagents](https://cursor.com/docs/context/subagents) — individual subfolders symlinked into `~/.cursor/agents/`. |
+| Path               | What it does                                                                                                                                                                                                           |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cursor/skills/`   | [Agent Skills](https://cursor.com/docs/context/skills) — each subfolder is one skill. Individual subfolders are symlinked into `~/.cursor/skills/`. Experiment here; promote to `monorama` or `school-supplies` when ready. |
+| `cursor/commands/` | [Global commands](https://cursor.com/docs/context/commands) — individual subfolders symlinked into `~/.cursor/commands/`. Slash commands available in every project.                                                   |
+| `cursor/agents/`   | [User subagents](https://cursor.com/docs/context/subagents) — individual subfolders symlinked into `~/.cursor/agents/`.                                                                                                |
 
 ## How install.sh works
 
@@ -56,11 +56,11 @@ bash scripts/install-cursor-tools.sh
 
 ### Idempotency rules
 
-| Mechanism | Used for | Behavior |
-| --------- | -------- | -------- |
-| **Marker blocks** | Shell dotfiles, `.bashrc` | Content is fenced with `# BEGIN id` / `# END id`. Block is inserted on first run, replaced on re-run. Lines outside the markers are never touched. |
-| **Individual symlinks** | Cursor settings, skills, commands, agents | Each item is linked only if the destination does not already exist. Pre-existing items (from other sources) are never removed or overwritten. |
-| **MCP merge** | `~/.cursor/mcp.json` | On re-run: local file is merged with repo using `jq`. Repo keys win on conflicts; local-only servers are preserved. |
+| Mechanism               | Used for                                  | Behavior                                                                                                                                           |
+| ----------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Marker blocks**       | Shell dotfiles, `.bashrc`                 | Content is fenced with `# BEGIN id` / `# END id`. Block is inserted on first run, replaced on re-run. Lines outside the markers are never touched. |
+| **Individual symlinks** | Cursor settings, skills, commands, agents | Each item is linked only if the destination does not already exist. Pre-existing items (from other sources) are never removed or overwritten.      |
+| **MCP merge**           | `~/.cursor/mcp.json`                      | On re-run: local file is merged with repo using `jq`. Repo keys win on conflicts; local-only servers are preserved.                                |
 
 ### Log output
 
