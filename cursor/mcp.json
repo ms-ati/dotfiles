@@ -5,6 +5,8 @@
       "headers": {},
       "alwaysAllow": [
         "atlassianUserInfo",
+        "createJiraIssue",
+        "editJiraIssue",
         "fetch",
         "getAccessibleAtlassianResources",
         "getConfluenceCommentChildren",
