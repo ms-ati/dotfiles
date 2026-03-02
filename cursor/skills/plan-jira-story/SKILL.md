@@ -28,13 +28,22 @@ also fetch each linked issue key using `getJiraIssue` individually.
 If no issue identifier is provided, ask the user for one before proceeding.
 If the issue cannot be found or the Atlassian MCP is unavailable, inform the user and stop.
 
-**Update Mode**: If the issue already has a structured plan in the description:
+**Update Mode**: If the issue already has a structured plan in the description (i.e., has
+`## Goals` or `## Task Breakdown` headings):
 - Summarize the existing plan sections
 - Ask: "This issue already has a plan. What would you like to update?"
   - Refine specific sections?
   - Add new information?
   - Complete revision?
 - Tailor subsequent steps based on the update intent
+
+**Existing Content Mode**: If the issue has a non-empty description that does NOT look like
+a structured plan (no `## Goals` or `## Task Breakdown` headings):
+- Summarize the existing content briefly (1–2 sentences)
+- Ask: "This issue has existing content (PM write-up, notes, etc.). Should I:
+  1. Append the plan below the existing content (separated by `---`)
+  2. Incorporate the existing content into the Background Context section of the plan"
+- Proceed based on the user's choice
 
 ### 2. Research Issue Context
 
@@ -154,6 +163,10 @@ using the `editJiraIssue` tool. Pass `cloudId`, `issueIdOrKey`, and `fields: { d
 - Merge changes with existing content
 - Preserve sections the user didn't want to change
 - Keep completed task checkboxes intact unless explicitly asked to reset
+
+**Existing Content Mode**: When the user chose to preserve existing non-plan content:
+- Write the description as: `{original content}\n\n---\n\n{plan}`
+- This ensures raw notes/PM write-ups are never lost
 
 After updating, confirm success and provide a summary of what was updated.
 
