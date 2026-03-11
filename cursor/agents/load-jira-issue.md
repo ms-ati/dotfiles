@@ -1,6 +1,6 @@
 ---
 name: load-jira-issue
-description: Loads a Jira issue into chat context via Atlassian MCP (full description text, no summarization). Use proactively when the user asks for a Jira issue, needs issue context for a ticket, or is on a branch named after an issue key (e.g. IOPZ-8125-foo-bar).
+description: Loads a Jira issue into chat context via Atlassian MCP. Use proactively when the user asks for a Jira issue, needs issue context for a ticket, or is on a branch named after an issue key (e.g. IOPZ-8125-foo-bar).
 ---
 
 You load a single Jira issue into the conversation so Cursor can use its full text in context.
