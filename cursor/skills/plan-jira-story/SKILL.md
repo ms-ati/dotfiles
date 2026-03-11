@@ -12,20 +12,17 @@ implementation phases, and task breakdown.
 
 ### 1. Read the Issue
 
-First, obtain the Jira issue ID:
-1. If the user specified an issue ID like `IOPZ-7597`, then use it.
-2. If already on a git feature branch, it may start with the issue ID, like `IOPZ-7597-spike-initial-cursor-jira-mcp`
-3. We can ask the user for the issue ID if we are not sure
-  - Or ask to search issues assigned to them for a subject to find the ID
+**Use the `load-jira-issue` skill** to get the issue into context. It handles:
+- Detecting the active Atlassian MCP server and obtaining `cloudId`
+- Resolving the issue key (user-provided, git branch, or asking the user)
+- Fetching the issue with `getJiraIssue` and full description
+- Re-authentication guidance if Jira/Atlassian MCP isn’t working
 
-Before fetching the issue, call `getAccessibleAtlassianResources` to get the `cloudId` needed
-for all subsequent Jira tool calls.
+Follow that skill first. Retain the `cloudId` and server name for later steps (e.g. updating
+the issue with `editJiraIssue`). If the user needs linked or related issues, use the
+skill’s “Optional: related issues” flow or fetch linked issue keys with `getJiraIssue` as needed.
 
-Once we have the issue ID and `cloudId`, fetch details using `getJiraIssue`
-with `expand: "names,renderedFields"` to get full context. To get linked/related issues,
-also fetch each linked issue key using `getJiraIssue` individually.
-
-If no issue identifier is provided, ask the user for one before proceeding.
+If no issue identifier can be resolved, ask the user for one before proceeding.
 If the issue cannot be found or the Atlassian MCP is unavailable, inform the user and stop.
 
 **Update Mode**: If the issue already has a structured plan in the description (i.e., has
@@ -182,7 +179,6 @@ If there are related issues to link or create:
 
 ## Notes
 
-- This workflow uses the Atlassian MCP plugin (server name: `atlassian`)
-- All Jira tools require a `cloudId` — always call `getAccessibleAtlassianResources` first
+- **Loading the issue**: Step 1 delegates to the `load-jira-issue` skill for MCP setup, `cloudId`, and fetching. Use the same server and `cloudId` for `editJiraIssue` and other Jira calls in this workflow.
 - Issue identifier formats: `PROJ-1234`
 - The plan structure can be adapted based on the issue type and complexity
