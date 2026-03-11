@@ -12,15 +12,11 @@ and updating Jira status.
 
 ### 1. Read the Issue
 
-First, obtain the Jira issue ID:
-1. If the user specified an issue ID like `IOPZ-7597`, use it.
-2. If already on a git feature branch, it may start with the issue ID, like `IOPZ-7597-short-description`.
-3. Otherwise, ask the user for the issue ID before proceeding.
-
-Call `getAccessibleAtlassianResources` to get the `cloudId` needed for all subsequent Jira
-tool calls. Then fetch the issue using `getJiraIssue` with `expand: "names,renderedFields"`.
-
-If the issue cannot be found or the Atlassian MCP is unavailable, inform the user and stop.
+**Use the `load-jira-issue` skill** to get the issue into context. It handles server detection,
+`cloudId`, resolving the issue key (user-provided, git branch, or ask), and fetching the full
+description. Retain the `cloudId` and server name for later steps (`getTransitionsForJiraIssue`,
+`transitionJiraIssue`). If the issue cannot be found or the Atlassian MCP is unavailable, inform
+the user and stop.
 
 ### 2. Validate Plan Exists
 
@@ -125,8 +121,9 @@ Context is loaded and Jira is updated. Ask:
 
 ## Notes
 
-- This workflow uses the Atlassian MCP plugin (server name: `atlassian`)
-- All Jira tools require a `cloudId` — always call `getAccessibleAtlassianResources` first
+- **Loading the issue**: Step 1 delegates to the `load-jira-issue` skill for MCP setup and
+  `cloudId`; use the same server and `cloudId` for `getTransitionsForJiraIssue` and
+  `transitionJiraIssue`.
 - Issue identifier format: `PROJ-1234`
 - Branch names must start with the Jira issue key (CI/CD enforces this)
 - Related skills: `plan-jira-story` skill for planning issues before starting

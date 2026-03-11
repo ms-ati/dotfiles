@@ -12,15 +12,11 @@ selected tasks from the original issue to new issues while maintaining traceabil
 
 ### 1. Read the Issue
 
-First, obtain the Jira issue ID:
-1. If the user specified an issue ID like `IOPZ-7597`, use it.
-2. If already on a git feature branch, it may start with the issue ID.
-3. Otherwise, ask the user for the issue ID before proceeding.
-
-Call `getAccessibleAtlassianResources` to get the `cloudId` needed for all subsequent Jira
-tool calls. Then fetch the issue using `getJiraIssue` with `expand: "names,renderedFields"`.
-
-If the issue cannot be found or the Atlassian MCP is unavailable, inform the user and stop.
+**Use the `load-jira-issue` skill** to get the issue into context. It handles server detection,
+`cloudId`, resolving the issue key (user-provided, git branch, or ask), and fetching the full
+description. Retain the `cloudId` and server name for later steps (`createJiraIssue`,
+`editJiraIssue`). If the issue cannot be found or the Atlassian MCP is unavailable, inform the
+user and stop.
 
 **Validate Plan Exists**: Check that the issue description contains a structured plan with:
 - **Goals / Problems to Solve**
@@ -163,8 +159,8 @@ Suggest next steps:
 
 ## Notes
 
-- This workflow uses the Atlassian MCP plugin (server name: `atlassian`)
-- All Jira tools require a `cloudId` — always call `getAccessibleAtlassianResources` first
+- **Loading the issue**: Step 1 delegates to the `load-jira-issue` skill for MCP setup and
+  `cloudId`; use the same server and `cloudId` for `createJiraIssue` and `editJiraIssue`.
 - Issue identifier format: `PROJ-123`
 - Related skills:
   - `plan-jira-story` — for planning issues before or after splitting
