@@ -123,6 +123,10 @@ Split from [IOPZ-123] to focus on [specific scope].
 
 Capture the new issue key from the response (e.g., `IOPZ-456`).
 
+**Use the `jira-label-ensure-ai-planned` skill** for the new issue (with its `issueIdOrKey` and
+the same `cloudId`/server). If labels aren't in context, get the new issue or pass the key so
+the skill can ensure the label.
+
 ### 6. Update Original Issue
 
 Use `editJiraIssue` to update the original issue description:
@@ -136,6 +140,8 @@ Use `editJiraIssue` to update the original issue description:
    ```
 
 Preserve all other content and formatting.
+
+**Use the `jira-label-ensure-ai-planned` skill** for the original issue so it remains tagged.
 
 ### 7. Confirm and Suggest Next Steps
 
@@ -165,4 +171,5 @@ Suggest next steps:
 - Related skills:
   - `jira-story-plan` — for planning issues before or after splitting
   - `jira-story-start` — for starting implementation
+  - `jira-label-ensure-ai-planned` — used in this workflow for both new and original issues
 - Currently supports splitting to one new issue at a time; run multiple times for bulk splits
