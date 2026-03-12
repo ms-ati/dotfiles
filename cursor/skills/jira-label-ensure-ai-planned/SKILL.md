@@ -1,5 +1,5 @@
 ---
-name: jira-ensure-label-ai-planned
+name: jira-label-ensure-ai-planned
 description: Ensures the label `AI-planned` is set on a Jira issue without removing existing labels. Use when a skill or workflow needs to tag a Jira issue as AI-planned (e.g. after planning or reviewing a story with AI assistance).
 ---
 
@@ -10,7 +10,7 @@ Idempotently adds the `AI-planned` label to a Jira issue, preserving all existin
 ## Prerequisites
 
 You need `cloudId`, `issueIdOrKey`, and the Atlassian MCP server name in context. These are
-typically available from a prior `load-jira-issue` skill call. If not, run that skill first.
+typically available from a prior `jira-issue-load` skill call. If not, run that skill first.
 
 ## Steps
 

@@ -1,5 +1,5 @@
 ---
-name: start-jira-story
+name: jira-story-start
 description: Start implementation of a Jira story by validating the plan, setting up git, loading context, and updating Jira status.
 ---
 
@@ -12,7 +12,7 @@ and updating Jira status.
 
 ### 1. Read the Issue
 
-**Use the `load-jira-issue` skill** to get the issue into context. It handles server detection,
+**Use the `jira-issue-load` skill** to get the issue into context. It handles server detection,
 `cloudId`, resolving the issue key (user-provided, git branch, or ask), and fetching the full
 description. Retain the `cloudId` and server name for later steps (`getTransitionsForJiraIssue`,
 `transitionJiraIssue`). If the issue cannot be found or the Atlassian MCP is unavailable, inform
@@ -28,7 +28,7 @@ Check that the issue description contains a structured plan with these sections:
 
 If the plan is missing or incomplete:
 - **STOP** and inform the user
-- Suggest: "This issue doesn't have a structured plan. Run the `plan-jira-story` skill first."
+- Suggest: "This issue doesn't have a structured plan. Run the `jira-story-plan` skill first."
   (Use the actual issue identifier, e.g., `IOPZ-7597`)
 - Do NOT proceed until the issue has been planned
 
@@ -121,9 +121,9 @@ Context is loaded and Jira is updated. Ask:
 
 ## Notes
 
-- **Loading the issue**: Step 1 delegates to the `load-jira-issue` skill for MCP setup and
+- **Loading the issue**: Step 1 delegates to the `jira-issue-load` skill for MCP setup and
   `cloudId`; use the same server and `cloudId` for `getTransitionsForJiraIssue` and
   `transitionJiraIssue`.
 - Issue identifier format: `PROJ-1234`
 - Branch names must start with the Jira issue key (CI/CD enforces this)
-- Related skills: `plan-jira-story` skill for planning issues before starting
+- Related skills: `jira-story-plan` skill for planning issues before starting

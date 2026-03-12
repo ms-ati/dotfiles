@@ -1,5 +1,5 @@
 ---
-name: split-jira-story
+name: jira-story-split
 description: Split a Jira story into multiple peer issues when it becomes too large or complex.
 ---
 
@@ -12,7 +12,7 @@ selected tasks from the original issue to new issues while maintaining traceabil
 
 ### 1. Read the Issue
 
-**Use the `load-jira-issue` skill** to get the issue into context. It handles server detection,
+**Use the `jira-issue-load` skill** to get the issue into context. It handles server detection,
 `cloudId`, resolving the issue key (user-provided, git branch, or ask), and fetching the full
 description. Retain the `cloudId` and server name for later steps (`createJiraIssue`,
 `editJiraIssue`). If the issue cannot be found or the Atlassian MCP is unavailable, inform the
@@ -24,7 +24,7 @@ user and stop.
 
 If the plan is missing or incomplete:
 - **STOP** and inform the user
-- Suggest: "This issue doesn't have a structured plan. Run the `plan-jira-story` skill first."
+- Suggest: "This issue doesn't have a structured plan. Run the `jira-story-plan` skill first."
 - Do NOT proceed until the issue has been planned
 
 ### 2. Load SPIDR Context
@@ -154,15 +154,15 @@ Summarize what was done:
 ```
 
 Suggest next steps:
-- "Would you like to run the `plan-jira-story` skill on IOPZ-456 to expand the plan?"
+- "Would you like to run the `jira-story-plan` skill on IOPZ-456 to expand the plan?"
 - "Would you like to split more tasks from the original issue?"
 
 ## Notes
 
-- **Loading the issue**: Step 1 delegates to the `load-jira-issue` skill for MCP setup and
+- **Loading the issue**: Step 1 delegates to the `jira-issue-load` skill for MCP setup and
   `cloudId`; use the same server and `cloudId` for `createJiraIssue` and `editJiraIssue`.
 - Issue identifier format: `PROJ-123`
 - Related skills:
-  - `plan-jira-story` — for planning issues before or after splitting
-  - `start-jira-story` — for starting implementation
+  - `jira-story-plan` — for planning issues before or after splitting
+  - `jira-story-start` — for starting implementation
 - Currently supports splitting to one new issue at a time; run multiple times for bulk splits

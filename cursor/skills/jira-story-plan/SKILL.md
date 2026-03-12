@@ -1,5 +1,5 @@
 ---
-name: plan-jira-story
+name: jira-story-plan
 description: Read a Jira issue with goals, solution, acceptance criteria, and tasks
 ---
 
@@ -12,7 +12,7 @@ implementation phases, and task breakdown.
 
 ### 1. Read the Issue
 
-**Use the `load-jira-issue` skill** to get the issue into context. It handles:
+**Use the `jira-issue-load` skill** to get the issue into context. It handles:
 - Detecting the active Atlassian MCP server and obtaining `cloudId`
 - Resolving the issue key (user-provided, git branch, or asking the user)
 - Fetching the issue with `getJiraIssue` and full description
@@ -156,7 +156,7 @@ Ask: "Does this plan look good? Would you like any changes before we update the 
 Once the user approves the plan, update the Jira issue description with the new plan content
 using the `editJiraIssue` tool. Pass `cloudId`, `issueIdOrKey`, and `fields: { description: <markdown> }`.
 
-Then **use the `jira-ensure-label-ai-planned` skill** to tag the issue with `AI-planned`.
+Then **use the `jira-label-ensure-ai-planned` skill** to tag the issue with `AI-planned`.
 
 **Update Mode**: When updating an existing plan:
 - Merge changes with existing content
@@ -181,6 +181,6 @@ If there are related issues to link or create:
 
 ## Notes
 
-- **Loading the issue**: Step 1 delegates to the `load-jira-issue` skill for MCP setup, `cloudId`, and fetching. Use the same server and `cloudId` for `editJiraIssue` and other Jira calls in this workflow.
+- **Loading the issue**: Step 1 delegates to the `jira-issue-load` skill for MCP setup, `cloudId`, and fetching. Use the same server and `cloudId` for `editJiraIssue` and other Jira calls in this workflow.
 - Issue identifier formats: `PROJ-1234`
 - The plan structure can be adapted based on the issue type and complexity
