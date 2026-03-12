@@ -170,6 +170,6 @@ Suggest next steps:
 - Issue identifier format: `PROJ-123`
 - Related skills:
   - `jira-story-plan` — for planning issues before or after splitting
-  - `jira-story-start` — for starting implementation
+  - `jira-story-build` — for starting or resuming implementation
   - `jira-label-ensure-ai-planned` — used in this workflow for both new and original issues
 - Currently supports splitting to one new issue at a time; run multiple times for bulk splits
