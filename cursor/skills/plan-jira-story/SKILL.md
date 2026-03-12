@@ -156,6 +156,8 @@ Ask: "Does this plan look good? Would you like any changes before we update the 
 Once the user approves the plan, update the Jira issue description with the new plan content
 using the `editJiraIssue` tool. Pass `cloudId`, `issueIdOrKey`, and `fields: { description: <markdown> }`.
 
+Then **use the `jira-ensure-label-ai-planned` skill** to tag the issue with `AI-planned`.
+
 **Update Mode**: When updating an existing plan:
 - Merge changes with existing content
 - Preserve sections the user didn't want to change
