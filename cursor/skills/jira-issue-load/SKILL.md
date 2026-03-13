@@ -1,11 +1,30 @@
 ---
 name: jira-issue-load
-description: Loads a Jira issue into chat context via Atlassian MCP. Use when the user asks for a Jira issue, wants to load or fetch a ticket, needs issue context for a branch, or mentions an issue key (e.g. IOPZ-8125).
+description: Loads a Jira issue into chat context via Atlassian MCP. Use when the user asks for a Jira issue, wants to load or fetch a ticket, needs issue context for a branch, or mentions an issue key (e.g. IOPZ-8125). Also handles connectivity testing when the user asks to test or check the Jira/Atlassian MCP connection.
 ---
 
 # Load Jira Issue
 
-Load a single Jira issue into the conversation so its full text is in context for the rest of the chat.
+Load a single Jira issue into the conversation so its full text is in context for the rest of the chat. Also supports a connectivity-test mode to verify the Atlassian MCP is working without needing a ticket.
+
+## Mode Selection
+
+Determine which mode to run **before** taking any action, using this exact priority order:
+
+1. **Extract explicit issue key** from user text using pattern `[A-Z][A-Z0-9]+-[0-9]+` (e.g. `IOPZ-8125`).
+2. **If an issue key was found** → run **Issue Load Mode** for that key. Skip all other checks.
+3. **If no issue key was found** and user text matches any connectivity-test phrase → run **Connectivity Test Mode**:
+   - "test jira mcp"
+   - "test atlassian mcp"
+   - "test jira connection"
+   - "check jira connection"
+   - "diagnose jira mcp"
+   - "/jira-issue-load test" (treated as plain-text intent)
+4. **Otherwise** (no key, no test phrase) → run **Issue Load Mode with branch inference** (see below).
+
+> **Guardrail**: an explicit issue key always wins. If user text contains both test words and an issue key (e.g. `test jira mcp IOPZ-8125`), run Issue Load Mode for that key.
+
+---
 
 ## MCP configuration
 
@@ -26,10 +45,32 @@ Use this exact checklist whenever the user hits auth errors or "MCP server does 
 
 Reassure the user that the double-restart is a known quirk, not something they did wrong.
 
-## Steps
+---
+
+## Connectivity Test Mode
+
+Run this when the user wants to verify Atlassian MCP setup without loading a specific issue.
+
+1. **Probe server**: Call `getAccessibleAtlassianResources` with `{}` on `user-Atlassian`. If that fails with "MCP server does not exist", try `Atlassian`.
+2. **On success**: Report:
+   - Which server responded (`user-Atlassian` or `Atlassian`)
+   - The list of accessible resources (site names and IDs)
+   - Which resource was selected as the Jira-capable site and its `cloudId`
+   - The Jira scopes present (e.g. `read:jira-work`, `write:jira-work`)
+   - Confirmation: "Atlassian MCP is connected and ready."
+3. **On failure**: Show the **Re-authentication** checklist above and stop.
+
+---
+
+## Issue Load Mode
+
+### Steps
 
 1. **Get server and cloudId**: Call `getAccessibleAtlassianResources` with `{}` on `user-Atlassian`. If that fails with "MCP server does not exist", try `Atlassian`. From the successful response, take the `id` of the entry that has Jira scopes. This is your `cloudId`; remember which server name worked. If both attempts fail, show the **Re-authentication** checklist above and stop.
-2. **Resolve issue key**: Use the issue key the user gave. If none was given, check the current git branch name for a pattern like `PROJ-1234` or `IOPZ-8125` and use that. If still unknown, ask the user for the issue key.
+2. **Resolve issue key**:
+   - Use the issue key from the user's message if one was found in Mode Selection.
+   - If none was given, check the current git branch name for a pattern like `PROJ-1234` or `IOPZ-8125` and use that.
+   - If still unknown, ask the user for the issue key.
 3. **Fetch the issue**: Call `getJiraIssue` on the same server you used in step 1, with:
    - `cloudId`: from step 1
    - `issueIdOrKey`: the issue key (e.g. `"IOPZ-8125"`)
@@ -37,11 +78,12 @@ Reassure the user that the double-restart is a known quirk, not something they d
 4. **Surface the issue**: Present a short **header** (key, summary, type, status, assignee, link: `https://panoramaed.atlassian.net/browse/<KEY>`), then **include the full description text** in your response. Do not summarize or truncate — Cursor works best with the complete text in context.
    - **Screenshots and attachments**: If the issue has attachments (`fields.attachment`) or the description references images, prefer pulling image attachments into context via any MCP tool that fetches attachment content. For other files, list filename and link. If the MCP has no attachment API or fetch fails, list attachment filenames and add: *"Open the issue link above to view attachments in Jira."*
 
-## Optional: related issues
+### Optional: related issues
 
 If the user needs linked or related issues, use `searchJiraIssuesUsingJql` on the same server with the same `cloudId` and a JQL query (e.g. `parent = IOPZ-8125` for sub-tasks). Fetch each with `getJiraIssue` and surface each with a brief header plus full description text.
 
 ## Output
 
-- Header: brief (key, type, status, assignee, link). Description: **always the full text** — no summarization.
+- **Connectivity Test Mode**: Report server, cloudId, scopes, and a clear pass/fail status.
+- **Issue Load Mode**: Header: brief (key, type, status, assignee, link). Description: **always the full text** — no summarization.
 - For auth or "server does not exist" errors, show the **Re-authentication** checklist and mention that the second restart is a known quirk.
