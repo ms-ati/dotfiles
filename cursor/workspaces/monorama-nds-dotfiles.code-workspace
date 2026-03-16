@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "path": "/workspaces/monorama"
+        },
+        {
+            "path": "/workspaces/monorama/apps/nds"
+        },
+        {
+            "path": "/workspaces/.codespaces/.persistedshare/dotfiles"
+        }
+    ]
+}
